@@ -136,6 +136,139 @@ fn main() {
 
     //////////////////////////////////////////////////////////////////
     //Refrences and Borrowing
+    //A reference allows a program to use a value without moving ownership,we decribe this action of creating a reference as borrowing
+    //A referece is like a address of orignal value in memory
+    //a reference can hold the address of a value on either the stack or the heap so we can borrow a reference to a stack value
 
+    let my_stack_value=2;
+
+    //so below we have taken the meory address where the value 2 is being stored and we saved that memory address to 'my_integer_reference'.
+    let my_integer_reference=&my_stack_value;
+
+    let my_heap_value=String::from("Toyoto");
+
+    //below we are not cloning the orignal string .we're simply storing the heap memory address where that String exists
+    //so my_heap_value remains the owner of the string and my_heap_reference is owner of this below reference
+    let my_heap_reference=&my_heap_value;
+
+
+
+    ////////////////////////////////////////////////////////////////////
+    //The Dereference Operator
+    //It is reperented with the astrik symbol(*);
+    //To Dereference means to access the data at the memory address that the reference points to.
+    //so we can think of the asterisk(*) as an instruction that says "Take this address,go to the address and get the value that is stored there" ,so this symbol can be used only with a reference
+
+    let my_stack_value1=2;
+    let my_integer_reference1=&my_stack_value;
+    println!("{}",*my_integer_reference1);
+
+    let my_heap_value1=String::from("Toyoto");
+    let my_heap_reference1=&my_heap_value;
+    println!("{}",*my_heap_reference1);
+
+    //below without using "*" this we will still get the value ,as Rust impliments the Display trait for references ,so they will display the valus that the address points to
+    println!("{}",my_heap_reference);
+
+
+
+    ////////////////////////////////////////////////////////////////
+    //String, &String, str, and &str
+
+    /*
+    String - A dynamic piece of text stored on the heap at runtime
+
+    &String ("ref String") - A reference to a heap String
+
+    str - A hard coded ,read-only piece of text encoded in the binary
+
+    &str ("ref str") - A reference to the text in the memory that has loaded the binary file
+    */
+
+    let ice_cream="Cookies and Cream";
+    println!("{}",ice_cream);
+
+
+
+    /////////////////////////////////////////////////////////////////
+    //The Copy Trait with References
+
+    //below &str is also a reference
+    let ice_cream1="Cookies and Cream";
+
+    //below we will not have any kind of movement of ownership,there is going to be two owners and they each owns a reference
+    let dessert=ice_cream1;
+
+    //so below ice_cream1 is still valid 
+    println!("{ice_cream1}");
+    println!("{dessert}");
+
+
+    ///////////////////////////////////////////////////////////////
+    //Ownership and Function Parameters
+    //concept of copying vs movies when dealing with variables as owners.The same ownership rules are going to apply to functions and their parameters
+    let apples=6;
+    let oranges=String::from("Oranges");
+
+    //so when this below function runs it will receive a copy of the integer 6 which we defined above ,so apple is never going to transfer the ownership of the value to the 'value' parameter
+    // print_my_value(apples);
+
+    //so here when we are passing the "oranges" to below function ,we are passing a string ,and as String does not impliment the copy trait,so a copy not be made and thus we are going to have a movement of ownership
+    //ownership will move from the 'oranges' name right here to the value 'name' in the function which we defined
+    print_my_value(oranges);
+
+    println!("{apples} is still valid");
+
+    //Invalid
+    // println!("{oranges} is still valid");
+
+
+
+    ///////////////////////////////////////////////////////////////////
+    //Mutable Parameters
+    //just like variables ,function parameters are immutable by default ,this means we cannot mutate the parameters value within the function body by default.
+    //we have to explicitly declare when we want a parameter to be mutable 
+
+    let burger=String::from("Burger");
+
+    //here even if we above define the burger varaible as mutable ,this function will still show error and that is because ownership is going to move from the 'burger' variable to the 'meal' parameter when we invoke this function and this meal parameter is mutable by default
+    add_fries(burger);//let meal=burger
+
+
+    /////////////////////////////////////////////////////////////
+    //Return Values I
+
+    //below is the moving a ownership from a value in the invoked function back to the calling function
+    let cake= bake_cake();
+    println!("I now have a {cake}");
+
+    //Return Values II
+    //some chanlenges in this
+    let mut current_meal=String::new();
+    current_meal= add_flour(current_meal);
 
 }
+
+//here after the executing the below function the value parameter which had the data will get out of scope but as the value provide to it is copy of orignal data due to i32 which impliments this automatically ,that data will remain in scope and will be valid as you can see above
+fn print_my_value(value:String) {
+    println!("Your value is {value}");
+}
+
+fn add_fries(mut meal:String) {
+    meal.push_str(" and Fries");
+    println!("{meal}");
+}
+
+fn bake_cake()->String {
+    // let cake=String::from("Chocolate Mousse");
+    // return cake;
+
+    //we can also do
+    String::from("Chocolate Mousse")
+}
+
+fn add_flour(mut meal:String)->String {
+    meal.push_str("Add flour");
+    meal
+}
+
