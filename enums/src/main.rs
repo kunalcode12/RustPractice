@@ -143,6 +143,12 @@ fn main() {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     //The match Keyword I
-    
+    let number=20;
+
+    match number {
+        5 => println!("The number is 5"),
+        8=>println!("It's *!!"),
+        _ => println!("It's something else",)
+    }
 
 }
