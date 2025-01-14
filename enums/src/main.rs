@@ -60,6 +60,27 @@ struct Credentials {
     password:String,
 }
 
+//Nesting Enums in Enums
+
+#[derive(Debug)]
+enum Beans {
+    Pinto,
+    Black,
+}
+
+#[derive(Debug)]
+enum Meat {
+    Chicken,
+    Steak,
+}
+
+#[derive(Debug)]
+enum RestaurentItem {
+    Burrito {meat:Meat, beans:Beans},
+    Bowl {meat:Meat, beans:Beans},
+    VeganPlate,
+}
+
 fn main() {
     // let visa=(
     //     PaymentMethodType::CreditCard,
@@ -106,6 +127,22 @@ fn main() {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Nesting Enums in Enums
+    let lunch=RestaurentItem::Burrito{
+        meat:Meat::Steak,
+        beans:Beans::Pinto
+    };
+    let dinner=RestaurentItem::Bowl { 
+        meat: Meat::Chicken, 
+        beans: Beans::Black
+    };
+    let abandoned_meal=RestaurentItem::VeganPlate;
+    println!("Lunch was {lunch:?} and dinner was {dinner:?}");
+    println!("Nobody ate {abandoned_meal:?}");
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //The match Keyword I
     
 
 }
