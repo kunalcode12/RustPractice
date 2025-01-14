@@ -32,6 +32,8 @@
 //////////////////////////////////////////////////////////////////////////////////////
 //Enum with Associated Values I
 
+use std::iter::Cycle;
+
 #[derive(Debug)]
 enum PaymentMethodType {
     //below this is tuple varient because its a variant that holds an associated tuple of data
@@ -80,6 +82,100 @@ enum RestaurentItem {
     Bowl {meat:Meat, beans:Beans},
     VeganPlate,
 }
+
+enum OperatingSystem {
+    Windows,
+    MacOS,
+    Linux
+}
+
+enum LaunderyCycle {
+    Cold,
+    Hot {temperature: u32},
+    Delicate (String),
+}
+
+//Defining Methods on Enums
+impl LaunderyCycle {
+    fn wash_laundery1(&self) {
+        match self {
+            LaunderyCycle::Cold => {
+                println!("Running the laundery with cold temperature")
+            },
+            LaunderyCycle::Hot { temperature } => {
+                println!("Running the laundery with a temperature of {temperature}");
+            },
+            LaunderyCycle::Delicate(fabric_type) => {
+                println!("Running the laundery with a delicate cycle for {fabric_type}");
+            }
+        }
+    }
+}
+
+#[derive(Debug)]
+enum OnlineOrderStatus {
+    Ordered,
+    Packed,
+    Shipped,
+    Delivered
+}
+
+impl OnlineOrderStatus {
+    fn check(&self) {
+        match self {
+            // OnlineOrderStatus::Ordered | OnlineOrderStatus::Packed => {
+            //     println!("Your item is being preped for shipment");
+            // }
+
+            OnlineOrderStatus::Delivered => {
+                println!("Your item has been delivered");
+            }
+
+            other_status => {
+                println!("Your item is {other_status:?}");
+            }
+
+            // _ => {
+            //     println!("Your item is not there yet");
+            // }
+        }
+    }
+}
+
+
+enum Milk {
+    Lowfat(i32),
+    Whole,
+}
+
+impl Milk {
+    fn drink(self) {
+        match self {
+            Milk::Lowfat(2) => {
+                println!("Delicious, 2% milk is my favorite");
+            }
+
+            //this below match will match with any value given in percent so that's why we dont have to use _ this method
+            Milk::Lowfat(percent) => {
+                println!("You've got the lowfat {percent} percent version");
+            }
+
+            Milk::Whole => {
+                println!("You've got the whole milk!");
+            }
+        }
+    }
+}
+
+//The if let Construct
+
+enum Milk1 {
+    Lowfat(i32),
+    Whole,
+    NonDairy {kind: String},
+}
+
+
 
 fn main() {
     // let visa=(
@@ -151,4 +247,123 @@ fn main() {
         _ => println!("It's something else",)
     }
 
+    let my_computer=OperatingSystem::MacOS;
+    let age= years_since_release(my_computer);
+    println!("My computers operating system is {age} years old");
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //The match Keyword II
+    let dads_computer=OperatingSystem::Windows;
+    let age=years_since_release1(dads_computer);
+    println!("My dad's computer is {age} years old");
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    //The match Keyword III
+    wash_laundery(LaunderyCycle::Cold);
+    wash_laundery(LaunderyCycle::Hot { temperature: 100 });
+    wash_laundery(LaunderyCycle::Delicate(String::from("Silk")));
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Defining Methods on Enums
+    LaunderyCycle::Cold.wash_laundery1();
+    let hot_cycle=LaunderyCycle::Hot { temperature: 100 };
+    hot_cycle.wash_laundery1();
+
+    let delicate_cycle=LaunderyCycle::Delicate(String::from("Silk"));
+    delicate_cycle.wash_laundery1();  
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    //The match Keyword IV - Catching Multiple Values
+    OnlineOrderStatus::Delivered.check();
+    OnlineOrderStatus::Ordered.check();
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //The match Keyword V - match with Exact Value
+    Milk::Lowfat(1).drink();
+    Milk::Lowfat(2).drink(); //this is match with exact value
+    Milk::Whole.drink();
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //The if let Construct
+    let my_beverage=Milk1::Whole;
+
+    //below code is saying if my_beverage is the Whole varient(::Whole) of the 'Milk1' enum,then this block {} will execute otherwise nothing happens
+    if let Milk1::Whole = my_beverage {
+        println!("You have whole milk");
+    }
+
+    let my_beverage1=Milk1::Lowfat(2);
+
+    if let Milk1::Lowfat(percent) = my_beverage1 {
+        println!("Your beverage is {percent}% milk");
+    }
+
+    let my_beverage2=Milk1::NonDairy { kind: String::from("Oat") };
+
+    if let Milk1::NonDairy { kind } = my_beverage2 {
+        println!("Your beverage is {kind} milk");
+    } else {
+        println!("You have some other milk variant");
+    }
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //The let else Construct
+    let my_beverage_value=Milk1::Lowfat(2);
+
+    //so below else block will only execute if 'my_beverage_value' is not equal to 'Lowfat' variant(::Lowfat(percent)) 
+    //and if that is equal to 'Lowfat' variant(::Lowfat(percent)) then we will be able to use Lowfat(percent) this percent data/value after the block {} 
+    let Milk1::Lowfat(percent) = my_beverage_value else {
+        println!("You do not have the lowfat milk");
+        return;
+    };
+
+    println!("{percent}% milk is available here");
+
+}
+
+fn years_since_release(os:OperatingSystem)->u32 {
+    match os {
+        OperatingSystem::Windows => 39,
+        OperatingSystem::MacOS => 23,
+        OperatingSystem::Linux => 34,
+    }
+}
+
+fn years_since_release1(os:OperatingSystem)->u32 {
+    match os {
+        OperatingSystem::Windows => {
+            println!("Quite an old operating system!");
+            39
+        },
+        OperatingSystem::MacOS => 23,
+        OperatingSystem::Linux => 34,
+    }
+}
+
+fn wash_laundery(cycle: LaunderyCycle) {
+    match cycle {
+        LaunderyCycle::Cold => {
+            println!("Running the laundery with cold temperature")
+        },
+        LaunderyCycle::Hot { temperature } => {
+            println!("Running the laundery with a temperature of {temperature}");
+        },
+        LaunderyCycle::Delicate(fabric_type) => {
+            println!("Running the laundery with a delicate cycle for {fabric_type}");
+        }
+    }
 }
