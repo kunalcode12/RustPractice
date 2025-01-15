@@ -165,6 +165,73 @@ fn main() {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //The Result Enum
+    //This Enum models the outcome of an evaluation that can produce either a success or an error.
+    //So the Option enum is for representing presence versus absence ,while Result is for modeling success vs error
+    
+    //->The Result enum models an evaluation that can produce either a success or an error
+    //->The Ok varient indicates a success. it stores an associated piece of data of generic type T.
+    //->The Err varient indicates an error.it stores an associated piece of data of generic type E.
+    // pub enum Result<T,E> {
+    //     Ok(T),
+    //     Err(E),
+    // }
+
+    //as in below code we are not using the second paramter ,so be have to write the type manually
+    let ok:Result<i32, &str> = Result::Ok(5);
+    //as Result automatically impliment debug trait ,so we only manually have to impliment display trait
+    println!("{ok:?}");
+
+    let disaster:Result<i32, &str> = Result::Err("Something went wromg");
+    println!("{disaster:?}");
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //The parse Method on a string
+    let text="50";
+
+    //so to convert above 'text' to the equivalent integer
+    //so below if the parsing is successful then Result enum will return 'Ok' varient and if not the 'Err' varient ,as parse use Result enum to impliment its work
+    //so we will use turbofish operator ::<> to provide the type to Ok and Err
+    let text_as_number = text.parse::<i32>();
+    println!("{:?}",text_as_number);
+
+    let text1="Alabama";
+    let text_as_number1 = text1.parse::<i32>();
+    println!("{:?}",text_as_number1);
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Returning a Result Enum from a Function
+    let result=divide(10.0, 2.0);
+    
+    match result {
+        Ok(calculation) => println!("Result:{}", calculation),
+        Err(message) => println!("Error: {}", message),
+    }
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Result Methods
+    let result1=divide(10.0, 2.0);
+    println!("{}",result1.unwrap());
+    // println!("{}",result1.unwrap_or(0.0));
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Nuances of unwrap Method on Result
+    let my_result = operation(true);
+
+    //so below the ownership of my_result transfers to content
+    let content= match my_result {
+        Ok(message) => message,
+        Err(error) => error,
+    };
+    println!("{}",my_result.unwrap());
 }
 
 
@@ -189,5 +256,22 @@ fn is_item_in_stock(item_is_in_system:bool,item_is_in_stock:bool) ->Option<bool>
         // Option::None
         //alternative of above ,simplified version but works as same
         None
+    }
+}
+
+fn divide(numerator:f64, denominator:f64) ->Result<f64 , String> {
+    if denominator == 0.0 {
+        // Result::Err("Cannot divide by zero".to_string())
+        Err("Cannot divide by zero".to_string())
+    }else {
+       Ok( numerator / denominator)
+    }
+}
+
+fn operation(great_success: bool) ->Result<&'static str,&'static str> {
+    if great_success {
+        Ok("Success")
+    } else {
+        Err("Error")
     }
 }
