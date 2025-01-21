@@ -195,6 +195,7 @@ struct Flight {
     passenger:u32
 }
 
+
 impl Flight {
     fn new(origin:String,destination:String,price:f64,passenger:u32)->Self {
         Self {
